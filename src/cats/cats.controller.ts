@@ -1,49 +1,49 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Put,
-} from '@nestjs/common';
-import { PositiveIntPipe } from 'src/common/pipes/positiveInt.pipe';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CatsService } from './cats.service';
+import { ReadOnlyCatDto } from './dto/cat.dto';
+import { CatsRequestDto } from './dto/cats.request.dto';
 
 @Controller('cats')
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
-  // cats/
+  @ApiOperation({ summary: '현재 고양이 가져오기' })
   @Get()
-  getAllCat() {
-    return 'all cats';
+  getCurrentCat() {
+    return 'current cat';
   }
 
-  @Get(':id')
-  getOneCat(@Param('id', ParseIntPipe, PositiveIntPipe) param: number) {
-    console.log(param);
-    return 'one cat';
-  }
-
+  @ApiResponse({
+    status: 500,
+    description: 'Server Error ...',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Success',
+    type: ReadOnlyCatDto,
+  })
+  @ApiOperation({ summary: '회원가입' })
   @Post()
-  createCat() {
-    return 'create cat';
+  async signUp(@Body() body: CatsRequestDto) {
+    return await this.catsService.signUp(body);
   }
 
-  @Put(':id')
-  updateCat() {
-    return 'update cat';
+  @ApiOperation({ summary: '로그인' })
+  @Post('login')
+  logIn() {
+    return 'login';
   }
 
-  @Patch(':id')
-  updatePartialCat() {
-    return 'update partial cat';
+  @ApiOperation({ summary: '로그아웃' })
+  @Post('logout')
+  logOut() {
+    return 'logout';
   }
 
-  @Delete(':id')
-  deleteCat() {
-    return 'delete cat';
+  @ApiOperation({ summary: '고양이 이미지 업로드' })
+  @Post('upload/cats')
+  uploadCatImg() {
+    return 'uploadImg';
   }
 }
